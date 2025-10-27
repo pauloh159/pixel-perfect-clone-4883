@@ -8,7 +8,7 @@ interface ServiceCardProps {
 
 export const ServiceCard: React.FC<ServiceCardProps> = ({ image, title, description }) => {
   return (
-    <div className="relative w-auto h-[550px] rounded-lg overflow-hidden shadow-lg group">
+    <div className="relative w-auto h-auto min-h-[450px] sm:min-h-[500px] md:min-h-[550px] rounded-lg overflow-hidden shadow-lg group">
       <img
         src={image}
         alt={title}
@@ -20,13 +20,13 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ image, title, descript
         style={{ backdropFilter: 'blur(10px)' }}
       >
         <div className="text-center text-[#402510] transition-opacity duration-300 ease-in-out group-hover:opacity-0">
-          <h3 className="font-poppins text-2xl font-semibold leading-tight">
+          <h3 className="font-poppins text-xl sm:text-2xl font-semibold leading-tight">
             {title}
           </h3>
         </div>
-        <div className="absolute top-0 left-0 right-0 p-8 text-center text-[#402510] opacity-0 transition-opacity duration-500 ease-in-out group-hover:opacity-100">
-          <h3 className="font-poppins text-3xl font-bold mb-4">{title}</h3>
-          <p className="font-poppins text-lg">{description}</p>
+        <div className="absolute top-0 left-0 right-0 p-6 sm:p-8 text-center text-[#402510] opacity-0 transition-opacity duration-500 ease-in-out group-hover:opacity-100">
+          <h3 className="font-poppins text-2xl sm:text-3xl font-bold mb-4">{title}</h3>
+          <p className="font-poppins text-base sm:text-lg">{description}</p>
         </div>
       </div>
     </div>

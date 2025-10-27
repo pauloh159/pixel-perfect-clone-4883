@@ -1,28 +1,81 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Carousel, CarouselContent, CarouselItem } from './ui/carousel';
-import { eventsData } from '../data/events';
+import { HabilitadaRegistrationModal } from './HabilitadaRegistrationModal';
 
 interface Event {
   id: string;
-  name: string;
+  title?: {
+    rendered: string;
+  };
+  content?: {
+    rendered: string;
+  };
+  acf?: {
+    nome_evento?: string;
+    descricao_evento?: string;
+    data_evento?: string;
+    local_evento?: string;
+    max_participantes?: number;
+    url_imagem_evento?: string;
+  };
   date: string;
-  description: string;
-  image_url?: string;
-  location?: string;
-  max_participants?: number;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
+  status: string;
 }
 
 export const MethodologyTrainings = () => {
   const [api, setApi] = useState<any>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Usar dados estáticos dos eventos
-  const events: Event[] = eventsData.filter(event => event.is_active);
+  const fetchEvents = async (attempt = 0) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+      const response = await fetch('https://cms.nazaresantosestetica.com.br/wp-json/wp/v2/eventos?status=publish&per_page=100', {
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`Erro HTTP: ${response.status}`);
+      }
+
+      const data: Event[] = await response.json();
+      const activeEvents = data.filter(event => event.status === 'publish');
+      setEvents(activeEvents);
+      setRetryCount(0);
+    } catch (err) {
+      console.error('Erro ao buscar eventos:', err);
+      
+      if (attempt < 3) {
+        const delay = Math.pow(2, attempt) * 1000;
+        setTimeout(() => {
+          setRetryCount(attempt + 1);
+          fetchEvents(attempt + 1);
+        }, delay);
+      } else {
+        setError('Não foi possível carregar os eventos. Verifique sua conexão.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
   const loopedEvents = events.length > 0 ? [...events, ...events] : [];
 
   const startAutoScroll = () => {
@@ -72,20 +125,42 @@ export const MethodologyTrainings = () => {
     });
   };
 
-  const formatPrice = (price?: number) => {
-    if (!price) return 'Gratuito';
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(price);
+  const getEventName = (event: Event) => {
+    return event.acf?.nome_evento || event.title?.rendered || 'Evento sem título';
   };
 
-  if (events.length === 0) {
+  const getEventDescription = (event: Event) => {
+    const description = event.acf?.descricao_evento || event.content?.rendered || 'Descrição não disponível';
+    // Remove HTML tags se houver
+    return description.replace(/<[^>]*>/g, '');
+  };
+
+  const getEventImage = (event: Event) => {
+    return event.acf?.url_imagem_evento || '/placeholder-event.svg';
+  };
+
+  const getEventDate = (event: Event) => {
+    return event.acf?.data_evento || event.date;
+  };
+
+  const getEventLocation = (event: Event) => {
+    return event.acf?.local_evento || '';
+  };
+
+  const getEventMaxParticipants = (event: Event) => {
+    return event.acf?.max_participantes || 0;
+  };
+
+  const handleRegistrationSuccess = () => {
+    alert('Pré-cadastro realizado com sucesso! Você receberá um e-mail quando sua conta for ativada.');
+  };
+
+  if (loading) {
     return (
       <section className="py-20 md:py-32 px-4 bg-background">
         <div className="container mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-primary mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary mb-6">
               Fique Por Dentro da <span className="text-accent">Agenda de Treinamentos</span>
             </h2>
           </div>
@@ -104,10 +179,10 @@ export const MethodologyTrainings = () => {
     <section className="py-20 md:py-32 px-4 bg-background">
       <div className="container mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-primary mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary mb-6">
             Fique Por Dentro da <span className="text-accent">Agenda de Treinamentos</span>
           </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
             Participe dos nossos treinamentos exclusivos e aprenda as técnicas mais avançadas em estética.
           </p>
         </div>
@@ -129,8 +204,8 @@ export const MethodologyTrainings = () => {
                   <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
                     <div className="relative h-48 overflow-hidden">
                       <img
-                        src={event.image_url || '/Group 22.jpg'}
-                        alt={event.name}
+                        src={getEventImage(event)}
+                        alt={getEventName(event)}
                         className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                         loading={index === 0 ? "eager" : "lazy"}
                       />
@@ -140,37 +215,40 @@ export const MethodologyTrainings = () => {
                     </div>
                     <div className="p-6">
                       <h3 className="text-xl font-bold text-primary mb-2 line-clamp-2">
-                        {event.name}
+                        {getEventName(event)}
                       </h3>
                       <p className="text-gray-600 mb-4 line-clamp-3">
-                        {event.description}
+                        {getEventDescription(event)}
                       </p>
                       <div className="space-y-2 text-sm text-gray-500">
                         <div className="flex items-center">
                           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
-                          {formatDate(event.date)}
+                          {formatDate(getEventDate(event))}
                         </div>
-                        {event.location && (
+                        {getEventLocation(event) && (
                           <div className="flex items-center">
                             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
-                            {event.location}
+                            {getEventLocation(event)}
                           </div>
                         )}
-                        {event.max_participants && (
+                        {getEventMaxParticipants(event) > 0 && (
                           <div className="flex items-center">
                             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
-                            0/{event.max_participants} participantes
+                            0/{getEventMaxParticipants(event)} participantes
                           </div>
                         )}
                       </div>
-                      <button className="w-full mt-4 bg-accent text-white py-2 px-4 rounded-lg hover:bg-accent/90 transition-colors duration-300 font-semibold">
+                      <button 
+                        className="w-full mt-4 bg-accent text-white py-2 px-4 rounded-lg hover:bg-accent/90 transition-colors duration-300 font-semibold"
+                        onClick={() => setIsRegistrationModalOpen(true)}
+                      >
                         Inscrever-se
                       </button>
                     </div>
@@ -203,6 +281,12 @@ export const MethodologyTrainings = () => {
           </div>
         </div>
       </div>
+
+      <HabilitadaRegistrationModal
+        isOpen={isRegistrationModalOpen}
+        onClose={() => setIsRegistrationModalOpen(false)}
+        onSuccess={handleRegistrationSuccess}
+      />
     </section>
   );
 };

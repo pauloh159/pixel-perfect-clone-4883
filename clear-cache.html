@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpar Cache - Sistema Nazaré</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        .btn:hover {
+            background-color: #c82333;
+        }
+        .success {
+            color: #28a745;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .info {
+            background-color: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Limpeza de Cache</h1>
+        <p>Esta página irá limpar todos os dados armazenados localmente para resolver problemas de cache.</p>
+        
+        <div class="info">
+            <strong>⚠️ Atenção:</strong> Isso irá deslogar você de todas as contas e remover dados salvos localmente.
+        </div>
+
+        <button class="btn" onclick="clearAllData()">Limpar Todos os Dados</button>
+        <button class="btn" onclick="clearOnlyAuth()">Limpar Apenas Dados de Autenticação</button>
+        
+        <div id="result"></div>
+        
+        <div style="margin-top: 30px;">
+            <p><strong>Após a limpeza:</strong></p>
+            <ol style="text-align: left;">
+                <li>Feche completamente o navegador</li>
+                <li>Abra novamente</li>
+                <li>Acesse o sistema</li>
+                <li>Tente fazer login novamente</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function clearAllData() {
+            try {
+                // Limpar localStorage
+                localStorage.clear();
+                
+                // Limpar sessionStorage
+                sessionStorage.clear();
+                
+                // Limpar cookies do domínio atual
+                document.cookie.split(";").forEach(function(c) { 
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                });
+                
+                // Tentar limpar cache (se suportado)
+                if ('caches' in window) {
+                    caches.keys().then(function(names) {
+                        names.forEach(function(name) {
+                            caches.delete(name);
+                        });
+                    });
+                }
+                
+                document.getElementById('result').innerHTML = 
+                    '<div class="success">✅ Todos os dados foram limpos com sucesso!</div>';
+                    
+                // Recarregar a página após 2 segundos
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+                
+            } catch (error) {
+                document.getElementById('result').innerHTML = 
+                    '<div style="color: red;">❌ Erro ao limpar dados: ' + error.message + '</div>';
+            }
+        }
+        
+        function clearOnlyAuth() {
+            try {
+                // Limpar apenas dados relacionados à autenticação
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && (key.includes('auth') || key.includes('session') || key.includes('user') || key.includes('token'))) {
+                        keysToRemove.push(key);
+                    }
+                }
+                
+                keysToRemove.forEach(key => localStorage.removeItem(key));
+                
+                // Limpar sessionStorage relacionado à auth
+                const sessionKeysToRemove = [];
+                for (let i = 0; i < sessionStorage.length; i++) {
+                    const key = sessionStorage.key(i);
+                    if (key && (key.includes('auth') || key.includes('session') || key.includes('user') || key.includes('token'))) {
+                        sessionKeysToRemove.push(key);
+                    }
+                }
+                
+                sessionKeysToRemove.forEach(key => sessionStorage.removeItem(key));
+                
+                document.getElementById('result').innerHTML = 
+                    '<div class="success">✅ Dados de autenticação foram limpos com sucesso!</div>';
+                    
+                // Recarregar a página após 2 segundos
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+                
+            } catch (error) {
+                document.getElementById('result').innerHTML = 
+                    '<div style="color: red;">❌ Erro ao limpar dados de autenticação: ' + error.message + '</div>';
+            }
+        }
+        
+        // Mostrar informações sobre dados armazenados
+        window.onload = function() {
+            const localStorageSize = JSON.stringify(localStorage).length;
+            const sessionStorageSize = JSON.stringify(sessionStorage).length;
+            
+            console.log('LocalStorage size:', localStorageSize, 'bytes');
+            console.log('SessionStorage size:', sessionStorageSize, 'bytes');
+            console.log('LocalStorage keys:', Object.keys(localStorage));
+            console.log('SessionStorage keys:', Object.keys(sessionStorage));
+        };
+    </script>
+</body>
+</html>

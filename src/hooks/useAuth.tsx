@@ -1,6 +1,12 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
-import { login as authLogin, logout as authLogout, validateSession, updateProfile } from '@/services/authService';
+import { 
+  login as authLogin, 
+  logout as authLogout, 
+  validateSession, 
+  getCurrentUser, 
+  SessionData 
+} from '@/services/authService';
 
 interface User {
   id: string;
@@ -11,6 +17,8 @@ interface User {
   // Campos específicos para habilitadas
   whatsapp?: string;
   estado?: string;
+  is_active?: boolean;
+  enrollment_status?: string;
   
   // Campos específicos para admin
   full_name?: string;
@@ -31,13 +39,46 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+// Função auxiliar para obter a sessão inicial
+const getInitialSession = (): User | null => {
+  if (typeof window !== 'undefined') {
+    const session = localStorage.getItem('authSession');
+    if (session) {
+      try {
+        const parsedSession: SessionData = JSON.parse(session);
+        // Adicionar verificação de expiração se necessário
+        if (new Date(parsedSession.expires_at) > new Date()) {
+          return parsedSession.user;
+        }
+      } catch (e) {
+        console.error("Failed to parse auth session", e);
+        return null;
+      }
+    }
+  }
+  return null;
+};
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(getInitialSession);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); // Adicionado estado de erro
 
   useEffect(() => {
-    checkAuth();
+    // A lógica de checkAuth foi movida para cá e simplificada
+    validateSession()
+      .then(session => {
+        if (session) {
+          setUser(session.user);
+        }
+      })
+      .catch(err => {
+        console.error('Erro na validação de sessão:', err);
+        setUser(null);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   const login = async (email: string, password: string, userType: 'admin' | 'habilitada') => {
@@ -45,8 +86,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setError(null);
     try {
       const session = await authLogin(email, password, userType);
-      setUser(session.user);
-      return { success: true, user: session.user };
+      const userWithRole = { ...session.user, role: userType };
+      setUser(userWithRole);
+      return { success: true, user: userWithRole };
     } catch (err: any) {
       const message = err.message || 'Erro no login';
       setError(message);
@@ -63,23 +105,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(null);
     } catch (err) {
       console.error('Erro no logout:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const checkAuth = async () => {
-    setLoading(true);
-    try {
-      const session = await validateSession();
-      if (session) {
-        setUser(session.user);
-      } else {
-        setUser(null);
-      }
-    } catch (err) {
-      console.error('Erro na validação de sessão:', err);
-      setUser(null);
     } finally {
       setLoading(false);
     }

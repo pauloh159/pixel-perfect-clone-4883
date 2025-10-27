@@ -1,0 +1,57 @@
+name: Deploy to HostGator via FTP
+
+on:
+  push:
+    branches:
+      - main # Altere para 'master' se essa for sua branch principal
+
+jobs:
+  web-deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run linting
+      run: npm run lint
+
+    - name: Build project
+      run: npm run build
+      env:
+        VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+        VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        VITE_PUBLIC_BUILDER_KEY: ${{ secrets.VITE_PUBLIC_BUILDER_KEY }}
+        VITE_N8N_WEBHOOK_URL_BLOG: ${{ secrets.VITE_N8N_WEBHOOK_URL_BLOG }}
+
+    - name: FTP Deploy
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.0
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./dist/
+        server-dir: public_html/
+        # Limpa arquivos antigos no servidor (cuidado: isso remove o site antigo)
+        dangerous-clean-slate: true
+        # Exclui arquivos que não devem ser enviados
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          **/.env
+          **/.env.*
+          **/README.md
+          **/*.md
+          **/sql/**
+          **/supabase/**

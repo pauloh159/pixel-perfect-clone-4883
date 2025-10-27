@@ -48,13 +48,13 @@ export const MethodologyFeatures: React.FC = () => {
 
         {/* Method Description */}
         <div className="mt-8 md:mt-12 lg:mt-16">
-          <p className="font-jomolhari text-xl text-[hsl(var(--foreground))] text-center leading-relaxed mb-4">
+          <p className="font-jomolhari text-base sm:text-lg md:text-xl text-[hsl(var(--foreground))] text-center leading-relaxed mb-4">
             O <strong>Método Nazaré Santos</strong> transforma a estética com técnicas inovadoras que proporcionam lifting imediato, redução de linhas de expressão e combate ao envelhecimento. <strong>Treinamentos presenciais em Fortaleza</strong> e online atendem profissionais do Brasil e exterior.
           </p>
-          <p className="font-jomolhari text-xl text-[hsl(var(--foreground))] text-center leading-relaxed mb-4">
+          <p className="font-jomolhari text-base sm:text-lg md:text-xl text-[hsl(var(--foreground))] text-center leading-relaxed mb-4">
             Com formação internacional na Tailândia e Bruxelas, Nazaré capacitou centenas de profissionais até 2025. <strong>O curso "Mãos que Drenam com Resultado"</strong> aconteceu em janeiro/2025,com 28 horas de formação.
           </p>
-          <p className="font-jomolhari text-xl text-[hsl(var(--foreground))] text-center leading-relaxed">
+          <p className="font-jomolhari text-base sm:text-lg md:text-xl text-[hsl(var(--foreground))] text-center leading-relaxed">
             Depoimentos destacam o método como "divisor de águas" para esteticistas. Alunos valorizam o toque humanizado e resultados visíveis que transformam carreiras e elevam a autoestima dos clientes.
           </p>
         </div>
