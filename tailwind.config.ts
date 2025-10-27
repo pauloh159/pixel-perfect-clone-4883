@@ -14,6 +14,8 @@ export default {
     },
     extend: {
       colors: {
+        'header-background': '#EFCFA6',
+        'footer-background': '#EFCFA6',	
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -57,6 +59,17 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+      },
+      fontFamily: {
+        jomolhari: ['Jomolhari', 'serif'],
+      },
+      fontSize: {
+        'h1-custom': ['24pt', {
+          lineHeight: '1.2',
+        }],
+        'h2-custom': ['21pt', {
+          lineHeight: '1.2',
+        }],
       },
       borderRadius: {
         lg: "var(--radius)",

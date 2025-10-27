@@ -2,52 +2,36 @@ import React from 'react';
 
 export const Gallery: React.FC = () => {
   const galleryImages = [
-    {
-      src: 'https://api.builder.io/api/v1/image/assets/TEMP/bbc120951dded6bb5bf68b00f31835314cfade88?width=1540',
-      className: 'w-[770px] h-[358px] absolute left-0 top-0'
-    },
-    {
-      src: 'https://api.builder.io/api/v1/image/assets/TEMP/c86741d3559b627048e962f3a4296e7b8e53e251?width=1105',
-      className: 'w-[552px] h-[358px] absolute left-[782px] top-0'
-    },
-    {
-      src: 'https://api.builder.io/api/v1/image/assets/TEMP/fa32b8cf265658d78ec50f42de3f7e14a4ef18e1?width=752',
-      className: 'w-[348px] h-[370px] absolute left-0 top-[373px]'
-    },
-    {
-      src: 'https://api.builder.io/api/v1/image/assets/TEMP/ca6c9094a9bd6fdbc2d4e695c8e02242c4bc1f76?width=1928',
-      className: 'w-[970px] h-[370px] absolute left-[364px] top-[373px]'
-    },
-    {
-      src: 'https://api.builder.io/api/v1/image/assets/TEMP/b244a5fbf689563de796746a165c401c7fac69b5?width=851',
-      className: 'w-[370px] h-[743px] absolute left-[1348px] top-0'
-    }
+    { src: "/Recepção da clínica.jpg", alt: "Recepção da clínica com balcão e sofás", className: "col-span-2 row-span-1" },
+    { src: "/sala de tratamenteo com prateleiras.png", alt: "Sala de tratamento com maca e prateleiras de madeira", className: "col-span-1 row-span-1" },
+    { src: "/cadeira de estética.png", alt: "Cadeira de estética reclinável em sala com prateleiras de produtos", className: "col-start-4 row-start-1 row-span-2" },
+    { src: "/sala de estar da clinica.png", alt: "Sala de espera com sofás e poltronas", className: "col-span-1 row-span-1" },
+    { src: "/maca de massagem em sala de tratamento.png", alt: "Maca de massagem em uma sala ampla com decoração minimalista", className: "col-span-2 row-span-1" },
   ];
 
   return (
-    <section className="relative">
-      <div className="flex w-[1046px] h-[151px] flex-col justify-center text-center text-[46px] font-normal capitalize absolute left-[437px] top-[2934px]">
-        <div className="text-[#402510]">
-          Nada Melhor do que um atendimento de qualidade em um
+    <section className="w-full py-12 md:py-16 lg:py-20 bg-[hsl(var(--background))] flex flex-col justify-center items-center">
+      <div className="container mx-auto px-4"> {/* Adicionada esta div para controlar as margens */}
+        <div className="text-center mb-8"> {/* Removido px-4 daqui, pois o container pai já o tem */}
+          <h2 className="text-h2-custom md:text-h2-custom font-jomolhari font-regular text-[#402510] leading-tight">
+            Nada Melhor Do Que Um Atendimento De <br />
+            Qualidade Em Um <span className="text-[#A66642]">Ambiente Acolhedor</span>
+          </h2>
         </div>
-        <div className="text-[#A66642]">ambiente acolhedor</div>
-      </div>
-      
-      <div className="w-[1718px] h-[743px] absolute left-[101px] top-[3143px]">
-        {galleryImages.map((image, index) => (
-          <div
-            key={index}
-            className={`${image.className} group cursor-pointer overflow-hidden rounded-[20px]`}
-          >
-            <div className="w-full h-full absolute bg-[#D9D9D9] rounded-[20px]" />
-            <img
-              src={image.src}
-              alt={`Ambiente da clínica ${index + 1}`}
-              className="transition-transform duration-[0.3s] ease-[ease] w-full h-full object-cover group-hover:scale-110"
-            />
+        <div className="relative w-full h-[743px]"> {/* Removido px-4 daqui, pois o container pai já o tem */}
+          <div className="grid grid-cols-4 grid-rows-2 gap-[15px] w-full h-full">
+            {galleryImages.map((image, index) => (
+              <div key={index} className={`relative overflow-hidden rounded-2xl ${image.className}`}>
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                />
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      </div> {/* Fim da div container */}
     </section>
   );
 };

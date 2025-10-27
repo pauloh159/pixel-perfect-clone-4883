@@ -2,23 +2,28 @@ import React from 'react';
 
 export const Stats: React.FC = () => {
   const stats = [
-    { label: '+6 Anos de Serviços', value: '6+' },
-    { label: '+800 Clientes', value: '800+' },
-    { label: '+ 860 Casos de Sucesso', value: '860+' }
+    '+6 Anos de Serviços',
+    '+800 Clientes',
+    '+ 860 Casos de Sucesso'
   ];
 
   return (
-    <section className="relative">
-      <div className="w-[1581px] h-[145px] shadow-[8px_4px_30px_0_rgba(0,0,0,0.25)] backdrop-blur-[3.5px] absolute bg-[rgba(237,237,237,0.50)] rounded-[20px_20px_0_0] left-[170px] top-[698px]" />
-      <div className="inline-flex items-center gap-[134px] absolute w-[1060px] h-12 left-[430px] top-[744px]">
-        {stats.map((stat, index) => (
-          <div
-            key={index}
-            className="text-[#402510] text-3xl font-normal relative hover:text-[#A66642] transition-colors duration-300"
-          >
-            {stat.label}
+    <section className="relative z-20 px-4 md:px-8 lg:px-16 -mt-24">
+      <div className="container mx-auto max-w-6xl">
+        {/* Glass morphism background */}
+        <div className="w-full rounded-t-[20px] bg-[rgba(237,237,237,0.50)] shadow-[8px_4px_30px_0_rgba(0,0,0,0.25)] backdrop-blur-[3.5px] p-6 md:p-8 lg:p-12">
+          {/* Stats content */}
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 lg:gap-16">
+            {stats.map((stat, index) => (
+              <div
+                key={index}
+                className="text-[hsl(var(--primary))] font-jomolhari text-xl md:text-2xl lg:text-3xl font-normal text-center"
+              >
+                {stat}
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
     </section>
   );
