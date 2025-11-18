@@ -15,7 +15,7 @@ interface Habilitada {
   profile_image_url?: string;
   enrollment_date: string;
   enrollment_status: string;
-  course_progress: any;
+  course_progress: unknown;
   is_active: boolean;
   failed_login_attempts: number;
   last_login: string | null;
@@ -68,6 +68,9 @@ const Habilitadas: React.FC = () => {
           password: newHabilitada.password,
           whatsapp: newHabilitada.whatsapp,
           estado: newHabilitada.estado,
+          is_active: false,
+          enrollment_status: 'inactive',
+          enrollment_date: new Date().toISOString().split('T')[0],
         }])
         .select()
         .single();

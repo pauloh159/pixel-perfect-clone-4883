@@ -2,11 +2,11 @@ import React from 'react';
 
 export const Gallery: React.FC = () => {
   const galleryImages = [
-    { src: "/Recepção da clínica.jpg", alt: "Recepção da clínica com balcão e sofás", className: "lg:col-span-2 lg:row-span-1" },
-    { src: "/sala de tratamenteo com prateleiras.png", alt: "Sala de tratamento com maca e prateleiras de madeira", className: "lg:col-span-1 lg:row-span-1" },
-    { src: "/cadeira de estética.png", alt: "Cadeira de estética reclinável em sala com prateleiras de produtos", className: "lg:col-start-4 lg:row-start-1 lg:row-span-2" },
-    { src: "/sala de estar da clinica.png", alt: "Sala de espera com sofás e poltronas", className: "lg:col-span-1 lg:row-span-1" },
-    { src: "/maca de massagem em sala de tratamento.png", alt: "Maca de massagem em uma sala ampla com decoração minimalista", className: "lg:col-span-2 lg:row-span-1" },
+    { src: "/recepção.jpeg", alt: "Recepção da clínica com balcão e sofás", className: "lg:col-span-2 lg:row-span-1" },
+    { src: "/sala-atendimento.jpeg", alt: "Sala de tratamento com maca e prateleiras de madeira", className: "lg:col-span-1 lg:row-span-1" },
+    { src: "/mesa.jpeg", alt: "Cadeira de estética reclinável em sala com prateleiras de produtos", className: "lg:col-start-4 lg:row-start-1 lg:row-span-2" },
+    { src: "/placa.jpeg", alt: "Sala de espera com sofás e poltronas", className: "lg:col-span-1 lg:row-span-1" },
+    { src: "/5.jpg", alt: "Maca de massagem em uma sala ampla com decoração minimalista", className: "lg:col-span-2 lg:row-span-1" },
   ];
 
   return (

@@ -47,16 +47,24 @@ export const login = async (email: string, password: string, userType: 'admin' |
     throw new Error(error.message);
   }
 
-  const response = data as any;
+  const response = data as LoginResponse;
 
   if (response && response.success && response.session_token) {
-    const userPayload = userType === 'admin' ? response.user : response;
+    const userPayload = userType === 'admin' && response.user ? response.user : response;
+
+    const expiresAt = response.expires_at
+      ? response.expires_at
+      : new Date(Date.now() + (userType === 'admin' ? 24 : 8) * 60 * 60 * 1000).toISOString();
+
+    if (!userPayload || (!userPayload.id && !userPayload.user_id)) {
+      throw new Error('Resposta de login inválida: usuário ausente');
+    }
 
     const sessionData: SessionData = {
       session_token: response.session_token,
-      expires_at: response.expires_at!,
+      expires_at: expiresAt,
       user: {
-        id: userPayload.id || userPayload.user_id,
+        id: userPayload.id ?? userPayload.user_id,
         email: userPayload.email,
         name: userPayload.name,
         whatsapp: userPayload.whatsapp,
@@ -160,17 +168,17 @@ export const isAuthenticated = () => {
 
 export const isAdmin = () => {
   const user = getCurrentUser();
-  return user && (user as any).role === 'admin';
+  return !!user && user.role === 'admin';
 };
 
 export const isSuperAdmin = () => {
   const user = getCurrentUser();
-  return user && (user as any).role === 'superadmin';
+  return !!user && user.role === 'superadmin';
 };
 
 export const isHabilitada = () => {
   const user = getCurrentUser();
-  return user && (user as any).role === 'habilitada';
+  return !!user && user.role === 'habilitada';
 };
 
 export const updateProfile = async (profileData: {

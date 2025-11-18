@@ -43,9 +43,9 @@ export const HabilitadaRegistrationModal: React.FC<HabilitadaRegistrationModalPr
           whatsapp: formData.whatsapp,
           estado: formData.estado,
           password: formData.password,
-          is_active: false, // Conta inativa por padrão
-          enrollment_status: 'inactive', // Status de matrícula inativo
-          enrollment_date: new Date().toISOString().split('T')[0] // Apenas a data
+          is_active: false,
+          enrollment_status: 'inactive',
+          enrollment_date: new Date().toISOString().split('T')[0]
         }]);
 
       if (error) throw error;

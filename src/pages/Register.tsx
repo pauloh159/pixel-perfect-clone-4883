@@ -30,22 +30,23 @@ export function Register() {
     setSuccess(false);
 
     try {
-      const { error: signUpError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          data: {
-            full_name: formData.name,
+      const { error: insertError } = await supabase
+        .from('habilitadas')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
             whatsapp: formData.whatsapp,
             estado: formData.estado,
             is_active: false,
-            role: 'habilitada',
+            enrollment_status: 'inactive',
+            enrollment_date: new Date().toISOString().split('T')[0],
           },
-        },
-      });
+        ]);
 
-      if (signUpError) {
-        throw signUpError;
+      if (insertError) {
+        throw insertError;
       }
 
       setSuccess(true);

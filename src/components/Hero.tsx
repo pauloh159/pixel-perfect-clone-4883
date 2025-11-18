@@ -21,7 +21,7 @@ export const Hero: React.FC = () => {
           <div className="flex-1 flex justify-start text-center lg:text-left">
             <div className="space-y-6">
               <h1 
-                className="text-h1-custom font-jomolhari text-primary mb-4"
+                className="text-h1 font-jomolhari text-primary mb-4"
                 dangerouslySetInnerHTML={{ __html: title }}
               />
               <p className="text-lg text-[#402510] leading-relaxed">
