@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
 import { supabase } from "../lib/supabase";
 import { Habilitada } from "../lib/supabase";
@@ -136,13 +135,13 @@ export function Habilitadas() {
         <div className="flex justify-center mb-8 space-x-2">
           <button
             onClick={() => {setViewMode("brazil"); setSelectedCountry(null); setSelectedRegion(null);}}
-            className={`px-6 py-3 rounded-lg font-semibold ${viewMode === 'brazil' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+            className={`px-6 py-3 rounded-lg font-jomolhari transition-colors ${viewMode === 'brazil' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}`}
           >
             Brasil
           </button>
           <button
             onClick={() => {setViewMode("world"); setSelectedRegion(null); setSelectedCountry(null);}}
-            className={`px-6 py-3 rounded-lg font-semibold ${viewMode === 'world' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+            className={`px-6 py-3 rounded-lg font-jomolhari transition-colors ${viewMode === 'world' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-muted/80'}`}
           >
             Outros Países
           </button>
@@ -161,10 +160,10 @@ export function Habilitadas() {
                     <button
                       key={region}
                       onClick={() => handleRegionClick(region)}
-                      className={`p-4 rounded-lg border-2 transition-colors ${
+                      className={`p-4 rounded-lg border-2 font-jomolhari transition-colors ${ 
                         selectedRegion === region
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-300 bg-white hover:border-blue-300'
+                          ? 'border-primary bg-primary/10'
+                          : 'border-border bg-card hover:border-primary/50'
                       }`}
                     >
                       <h3 className="font-semibold text-lg">{region}</h3>
@@ -176,8 +175,8 @@ export function Habilitadas() {
                 <div className="text-center mt-6">
                   <button
                     onClick={() => setSelectedRegion(null)}
-                    className={`px-6 py-3 rounded-lg font-semibold ${
-                      !selectedRegion ? "bg-blue-500 text-white" : "bg-gray-200"
+                    className={`px-6 py-3 rounded-lg font-jomolhari transition-colors ${
+                      !selectedRegion ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"
                     }`}
                   >
                     Ver Todas as Regiões
@@ -194,10 +193,10 @@ export function Habilitadas() {
                     <button
                       key={country}
                       onClick={() => handleCountryClick(country)}
-                      className={`p-4 rounded-lg border-2 transition-colors ${
+                      className={`p-4 rounded-lg border-2 font-jomolhari transition-colors ${
                         selectedCountry === country
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-300 bg-white hover:border-blue-300'
+                          ? 'border-primary bg-primary/10'
+                          : 'border-border bg-card hover:border-primary/50'
                       }`}
                     >
                       <h3 className="font-semibold text-lg">{country}</h3>
@@ -209,8 +208,8 @@ export function Habilitadas() {
                 <div className="text-center mt-6">
                   <button
                     onClick={() => setSelectedCountry(null)}
-                    className={`px-6 py-3 rounded-lg font-semibold ${
-                      !selectedCountry ? "bg-blue-500 text-white" : "bg-gray-200"
+                    className={`px-6 py-3 rounded-lg font-jomolhari transition-colors ${
+                      !selectedCountry ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"
                     }`}
                   >
                     Ver Todos os Países
@@ -245,7 +244,6 @@ export function Habilitadas() {
           </>
         )}
       </main>
-      <Footer />
     </div>
   );
 }
