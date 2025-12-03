@@ -11,10 +11,10 @@ export const Features: React.FC = () => {
     <section className="py-12 md:py-16 lg:py-20 px-4 md:px-8 lg:px-16 bg-[hsl(var(--background))]">
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-8 md:mb-12 lg:mb-16">
-          <h2 className="font-jomolhari text-h2-custom font-normal leading-tight">
+          <h1 className="font-jomolhari text-3xl sm:text-4xl lg:text-5xl font-normal leading-tight tracking-tighter">
             <span className="text-[hsl(var(--primary))]">{title.part1}</span>
             <span className="text-[hsl(var(--secondary))]">{title.part2}</span>
-          </h2>
+          </h1>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">

@@ -69,6 +69,11 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      fontSize: {
+        h1: ['4.5rem', { lineHeight: '1.2', letterSpacing: '-0.02em' }], // Exemplo: 72px
+        h2: ['3rem', { lineHeight: '1.3', letterSpacing: '-0.01em' }],  // Exemplo: 48px
+        h3: ['2.25rem', { lineHeight: '1.4' }], // Exemplo: 36px
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

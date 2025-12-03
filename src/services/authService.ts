@@ -9,7 +9,7 @@ interface LoginResponse {
     id: string;
     email: string;
     name: string;
-    role: string;
+    role: 'admin' | 'habilitada' | 'superadmin';
     whatsapp?: string;
     estado?: string;
     is_active?: boolean;
@@ -24,7 +24,7 @@ export interface SessionData {
     id: string;
     email: string;
     name: string;
-    role: string;
+    role: 'admin' | 'habilitada' | 'superadmin';
     whatsapp?: string;
     estado?: string;
     is_active?: boolean;
@@ -35,93 +35,99 @@ export interface SessionData {
 export const login = async (email: string, password: string, userType: 'admin' | 'habilitada') => {
   const rpcName = userType === 'admin' ? 'login_admin' : 'login_habilitada';
 
-  // Obter informações do cliente para logs de segurança
-  const userAgent = navigator.userAgent;
-  
   const { data, error } = await supabase.rpc(rpcName, {
     p_email: email,
     p_password: password,
   });
-  
+
   if (error) {
     throw new Error(error.message);
   }
 
   const response = data as LoginResponse;
 
-  if (response && response.success && response.session_token) {
-    const userPayload = userType === 'admin' && response.user ? response.user : response;
+  if (response && response.success) {
+    if (response.session_token) {
+      const userPayload = response.user;
 
-    const expiresAt = response.expires_at
-      ? response.expires_at
-      : new Date(Date.now() + (userType === 'admin' ? 24 : 8) * 60 * 60 * 1000).toISOString();
+      if (!userPayload || !userPayload.id) {
+        throw new Error('Resposta de login inválida: dados do usuário ausentes.');
+      }
 
-    if (!userPayload || (!userPayload.id && !userPayload.user_id)) {
-      throw new Error('Resposta de login inválida: usuário ausente');
+      const expiresAt = response.expires_at
+        ? response.expires_at
+        : new Date(Date.now() + (userType === 'admin' ? 24 : 8) * 60 * 60 * 1000).toISOString();
+
+      const sessionData: SessionData = {
+        session_token: response.session_token,
+        expires_at: expiresAt,
+        user: {
+          id: userPayload.id,
+          email: userPayload.email,
+          name: userPayload.name,
+          role: userPayload.role,
+          whatsapp: userPayload.whatsapp,
+          estado: userPayload.estado,
+          is_active: userPayload.is_active,
+          enrollment_status: userPayload.enrollment_status,
+        },
+      };
+
+      localStorage.setItem('session', JSON.stringify(sessionData));
+      return sessionData;
+    } else {
+      throw new Error(response.message || 'Token de sessão não fornecido após o login.');
     }
-
-    const sessionData: SessionData = {
-      session_token: response.session_token,
-      expires_at: expiresAt,
-      user: {
-        id: userPayload.id ?? userPayload.user_id,
-        email: userPayload.email,
-        name: userPayload.name,
-        whatsapp: userPayload.whatsapp,
-        estado: userPayload.estado,
-        is_active: userPayload.is_active,
-        enrollment_status: userPayload.enrollment_status,
-        role: userType,
-      },
-    };
-    
-    // Armazenar sessão com token seguro
-    localStorage.setItem('authSession', JSON.stringify(sessionData));
-    
-    return { user: sessionData.user };
   } else {
-    throw new Error(response.message || 'Login failed');
+    throw new Error(response.message || 'O login falhou.');
   }
 };
 
 export const logout = async () => {
-  const session = getStoredSession();
-  
+  const session = getSession();
+
   if (session?.session_token) {
     try {
-      // Invalidar sessão no servidor
       await supabase.rpc('logout_session', {
         p_session_token: session.session_token
       });
     } catch (error) {
       console.error('Erro ao invalidar sessão no servidor:', error);
+      // Mesmo em caso de erro, o logout local deve prosseguir para evitar que o usuário fique preso.
     }
   }
-  
-  // Remover sessão local
-  localStorage.removeItem('authSession');
+
+  // Sempre remove a sessão local, independentemente do sucesso do logout no servidor.
+  localStorage.removeItem('session');
 };
 
-const getStoredSession = (): SessionData | null => {
-  const session = localStorage.getItem('authSession');
-  if (!session) return null;
-  
+export const getSession = (): SessionData | null => {
+  const sessionStr = localStorage.getItem('session');
+  if (!sessionStr) return null;
+
   try {
-    return JSON.parse(session);
-  } catch {
-    localStorage.removeItem('authSession');
+    const session = JSON.parse(sessionStr) as SessionData;
+    // Validação adicional para garantir que a sessão tem a estrutura esperada
+    if (session && session.session_token && session.user) {
+      return session;
+    }
+    return null;
+  } catch (error) {
+    console.error("Erro ao analisar dados da sessão:", error);
+    // Em caso de erro de parse, é mais seguro remover a sessão inválida
+    localStorage.removeItem('session');
     return null;
   }
 };
 
 export const validateSession = async () => {
-  const session = getStoredSession();
+  const session = getSession();
   if (!session) return null;
   
   // Verificar se a sessão expirou localmente
   const expiresAt = new Date(session.expires_at);
   if (expiresAt <= new Date()) {
-    localStorage.removeItem('authSession');
+    localStorage.removeItem('session');
     return null;
   }
   
@@ -132,7 +138,7 @@ export const validateSession = async () => {
     });
     
     if (error || !data?.valid) {
-      localStorage.removeItem('authSession');
+      localStorage.removeItem('session');
       return null;
     }
     
@@ -145,20 +151,20 @@ export const validateSession = async () => {
           ...data.user
         }
       };
-      localStorage.setItem('authSession', JSON.stringify(updatedSession));
+      localStorage.setItem('session', JSON.stringify(updatedSession));
       return updatedSession;
     }
     
     return session;
   } catch (error) {
     console.error('Erro ao validar sessão:', error);
-    localStorage.removeItem('authSession');
+    localStorage.removeItem('session');
     return null;
   }
 };
 
 export const getCurrentUser = () => {
-  const session = getStoredSession();
+  const session = getSession();
   return session ? session.user : null;
 };
 
@@ -206,7 +212,7 @@ export const updateProfile = async (profileData: {
 
   // Atualizar os dados do usuário no localStorage se o update foi bem-sucedido
   if (data.success && data.user) {
-    const currentSession = getStoredSession();
+    const currentSession = getSession();
     if (currentSession) {
       const updatedSession = {
         ...currentSession,
@@ -218,7 +224,7 @@ export const updateProfile = async (profileData: {
           estado: data.user.estado
         }
       };
-      localStorage.setItem('authSession', JSON.stringify(updatedSession));
+      localStorage.setItem('session', JSON.stringify(updatedSession));
     }
   }
 

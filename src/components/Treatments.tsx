@@ -77,7 +77,7 @@ export const Treatments: React.FC = () => {
                 <Carousel setApi={setApi} opts={{ loop: true, align: 'start', containScroll: 'trimSnaps' }} className="w-full">
                   <CarouselContent className="-ml-[15px]">
                     {loopedCarouselItems.map((item, index) => (
-                      <CarouselItem key={index} className="pl-[15px] basis-full sm:basis-1/2 lg:basis-[40%]">
+                      <CarouselItem key={index} className="pl-[15px] basis-full sm:basis-1/2 lg:basis-[420px]">
                         <div className="relative w-full h-[450px] sm:h-[550px] rounded-lg overflow-hidden shadow-lg">
                           <img
                             src={item.acf?.url_imagem_servico || '/placeholder-service.svg'}
@@ -86,7 +86,7 @@ export const Treatments: React.FC = () => {
                             loading={index === 0 ? "eager" : "lazy"}
                           />
                           <div
-                            className="absolute bottom-0 left-0 right-0 bg-[#D9D9D940] rounded-b-lg flex items-center justify-center"
+                            className="absolute bottom-0 left-0 right-0 bg-[#D9D9D940] rounded-b-lg flex items-center justify-center px-4"
                             style={{ height: '33.33%', backdropFilter: 'blur(10px)' }}
                           >
                             <h3 className="font-poppins text-2xl font-semibold text-[#402510] leading-tight text-center">
