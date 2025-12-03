@@ -9,19 +9,19 @@ export const Hero: React.FC = () => {
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <section className="relative w-full">
+    <section className="relative w-full h-[600px]">
       <div
         className="absolute inset-0 w-full h-full bg-cover bg-center"
         style={{ backgroundImage: "url('/Group 22.jpg')" }}
       />
 
       <div className="relative z-10">
-        <div className="container mx-auto px-4 lg:px-8 flex flex-col lg:flex-row items-center pt-[78px] pb-16">
+        <div className="container mx-auto px-4 lg:px-8 flex flex-col lg:flex-row items-center pt-[79px] pb-12">
           
           <div className="flex-1 flex justify-start text-center lg:text-left">
             <div className="space-y-6">
               <h1 
-                className="text-h1 font-jomolhari text-primary mb-4"
+                className="text-3xl sm:text-4xl md:text-h1-custom font-jomolhari text-primary mb-2"
                 dangerouslySetInnerHTML={{ __html: title }}
               />
               <p className="text-lg text-[#402510] leading-relaxed">

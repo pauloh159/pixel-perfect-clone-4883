@@ -8,7 +8,7 @@ interface HeroContent {
 }
 
 const initialContent: HeroContent = {
-  title: 'Venha Cuidar-Se Com O Protocolo <br />Único De Nazaré Santos',
+  title: 'Venha Cuidar-Se Com O Protocolo<br />Único De Nazaré Santos',
   subtitle: 'Descubra o procedimento ideal para você com os segredos que só encontra aqui com a especialista que está revolucionando o mercado da estética.',
   buttonText: 'Realize o seu agendamento',
   imageUrl: '/foto do banner principal 1.png',
