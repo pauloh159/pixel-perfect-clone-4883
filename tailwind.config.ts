@@ -16,8 +16,8 @@ export default {
       colors: {
         'header-background': '#EFCFA6',
         'footer-background': '#EFCFA6',
-        border: "hsl(22 43% 46%)",
-        input: "hsl(22 43% 46%)",
+        border: "hsl(34 69% 79%)",
+        input: "hsl(34 69% 79%)",
         ring: "hsl(26 60% 15%)",
         background: "hsl(26 49% 90%)",
         foreground: "hsl(26 60% 15%)",
@@ -26,7 +26,7 @@ export default {
           foreground: "hsl(0 0% 100%)",
         },
         secondary: {
-          DEFAULT: "hsl(22 43% 46%)",
+          DEFAULT: "hsl(34 69% 79%)",
           foreground: "hsl(0 0% 100%)",
         },
         destructive: {
