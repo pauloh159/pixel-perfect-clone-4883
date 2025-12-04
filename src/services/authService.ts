@@ -15,6 +15,17 @@ interface LoginResponse {
     is_active?: boolean;
     enrollment_status?: string;
   };
+  // Campos para compatibilidade com resposta plana (flat) do banco de dados
+  user_id?: string;
+  id?: string;
+  email?: string;
+  name?: string;
+  full_name?: string;
+  role?: 'admin' | 'habilitada' | 'superadmin';
+  whatsapp?: string;
+  estado?: string;
+  is_active?: boolean;
+  enrollment_status?: string;
 }
 
 export interface SessionData {
@@ -40,7 +51,7 @@ export const login = async (email: string, password: string, userType: 'admin' |
     p_password: password,
   });
 
-  console.log('Resposta da Supabase:', data);
+  console.log('Resposta da Supabase (DEBUG):', JSON.stringify(data, null, 2));
 
   if (error) {
     throw new Error(error.message);
@@ -50,9 +61,24 @@ export const login = async (email: string, password: string, userType: 'admin' |
 
   if (response && response.success) {
     if (response.session_token) {
-      const userPayload = response.user;
+      let userPayload = response.user;
+
+      // Compatibilidade: Se não houver objeto 'user' aninhado, tenta montar a partir da raiz
+      if (!userPayload && (response.user_id || response.id)) {
+        userPayload = {
+          id: response.user_id || response.id || '',
+          email: response.email || '',
+          name: response.name || response.full_name || '',
+          role: response.role as 'admin' | 'habilitada' | 'superadmin',
+          whatsapp: response.whatsapp,
+          estado: response.estado,
+          is_active: response.is_active,
+          enrollment_status: response.enrollment_status,
+        };
+      }
 
       if (!userPayload || !userPayload.id) {
+        console.error('Dados recebidos:', response);
         throw new Error('Resposta de login inválida: dados do usuário ausentes.');
       }
 

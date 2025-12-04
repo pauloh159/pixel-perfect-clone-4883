@@ -40,7 +40,7 @@ CREATE TABLE public.blog_posts (
   author_name text,
   featured_image_url text,
   category text,
-  tags ARRAY,
+  tags text[],
   is_published boolean DEFAULT false,
   published_at timestamp with time zone,
   views_count integer DEFAULT 0,
@@ -240,19 +240,15 @@ BEGIN
     -- 11. Retorna os dados do usuário.
     RETURN json_build_object(
         'success', true,
-        'message', 'Login realizado com sucesso',
+        'user_id', v_habilitada.id,
+        'email', v_habilitada.email,
+        'name', v_habilitada.name,
+        'enrollment_status', v_habilitada.enrollment_status,
+        'course_progress', v_habilitada.course_progress,
         'session_token', v_session_token,
-        'expires_at', NOW() + INTERVAL '8 hours',
-        'user', json_build_object(
-            'id', v_habilitada.id,
-            'email', v_habilitada.email,
-            'name', v_habilitada.name,
-            'role', 'habilitada',
-            'whatsapp', v_habilitada.whatsapp,
-            'estado', v_habilitada.estado,
-            'is_active', v_habilitada.is_active,
-            'enrollment_status', v_habilitada.enrollment_status
-        )
+        'whatsapp', v_habilitada.whatsapp,
+        'estado', v_habilitada.estado,
+        'role', 'habilitada'
     );
 END;
 $$;
@@ -342,55 +338,6 @@ BEGIN
   );
 END;
 $$;
-
--- Função para atualizar perfil de habilitadas
-CREATE OR REPLACE FUNCTION public.update_habilitada_profile(
-  p_user_id uuid,
-  p_name text DEFAULT NULL,
-  p_email text DEFAULT NULL,
-  p_whatsapp text DEFAULT NULL,
-  p_estado text DEFAULT NULL
-)
-RETURNS jsonb
-LANGUAGE plpgsql
-SECURITY DEFINER
-AS $$
-DECLARE
-  v_updated_user public.habilitadas%ROWTYPE;
-BEGIN
-  -- Verificar se o usuário existe (removendo a verificação de is_active para permitir atualização de contas inativas)
-  IF NOT EXISTS (SELECT 1 FROM public.habilitadas WHERE id = p_user_id) THEN
-    RETURN jsonb_build_object(
-      'success', false,
-      'message', 'Usuário não encontrado'
-    );
-  END IF;
-
-  -- Atualizar apenas os campos fornecidos
-  UPDATE public.habilitadas
-  SET 
-    name = COALESCE(p_name, name),
-    email = COALESCE(p_email, email),
-    WhatsApp = COALESCE(p_whatsapp, WhatsApp),
-    Estado = COALESCE(p_estado, Estado),
-    updated_at = now()
-  WHERE id = p_user_id
-  RETURNING * INTO v_updated_user;
-
-  RETURN jsonb_build_object(
-    'success', true,
-    'message', 'Perfil atualizado com sucesso',
-    'user', jsonb_build_object(
-      'id', v_updated_user.id,
-      'email', v_updated_user.email,
-      'name', v_updated_user.name,
-      'whatsapp', v_updated_user.WhatsApp,
-      'estado', v_updated_user.Estado
-    )
-  );
-END;
-$$;
-
 
 -- Função para atualizar perfil de habilitadas
 CREATE OR REPLACE FUNCTION public.update_habilitada_profile(
