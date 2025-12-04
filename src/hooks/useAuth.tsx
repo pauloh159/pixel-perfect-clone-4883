@@ -42,7 +42,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 // Função auxiliar para obter a sessão inicial
 const getInitialSession = (): User | null => {
   if (typeof window !== 'undefined') {
-    const session = localStorage.getItem('authSession');
+    const session = localStorage.getItem('session');
     if (session) {
       try {
         const parsedSession: SessionData = JSON.parse(session);

@@ -40,6 +40,8 @@ export const login = async (email: string, password: string, userType: 'admin' |
     p_password: password,
   });
 
+  console.log('Resposta da Supabase:', data);
+
   if (error) {
     throw new Error(error.message);
   }
@@ -73,7 +75,7 @@ export const login = async (email: string, password: string, userType: 'admin' |
         },
       };
 
-      localStorage.setItem('session', JSON.stringify(sessionData));
+      localStorage.setItem('authSession', JSON.stringify(sessionData));
       return sessionData;
     } else {
       throw new Error(response.message || 'Token de sessão não fornecido após o login.');
@@ -98,11 +100,11 @@ export const logout = async () => {
   }
 
   // Sempre remove a sessão local, independentemente do sucesso do logout no servidor.
-  localStorage.removeItem('session');
+  localStorage.removeItem('authSession');
 };
 
 export const getSession = (): SessionData | null => {
-  const sessionStr = localStorage.getItem('session');
+  const sessionStr = localStorage.getItem('authSession');
   if (!sessionStr) return null;
 
   try {
@@ -115,7 +117,7 @@ export const getSession = (): SessionData | null => {
   } catch (error) {
     console.error("Erro ao analisar dados da sessão:", error);
     // Em caso de erro de parse, é mais seguro remover a sessão inválida
-    localStorage.removeItem('session');
+    localStorage.removeItem('authSession');
     return null;
   }
 };

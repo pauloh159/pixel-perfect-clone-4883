@@ -240,16 +240,19 @@ BEGIN
     -- 11. Retorna os dados do usuário.
     RETURN json_build_object(
         'success', true,
-        'user_id', v_habilitada.id,
-        'email', v_habilitada.email,
-        'name', v_habilitada.name,
-        'is_active', v_habilitada.is_active,
-        'enrollment_status', v_habilitada.enrollment_status,
-        'course_progress', v_habilitada.course_progress,
+        'message', 'Login realizado com sucesso',
         'session_token', v_session_token,
-        'whatsapp', v_habilitada.whatsapp,
-        'estado', v_habilitada.estado,
-        'role', 'habilitada'
+        'expires_at', NOW() + INTERVAL '8 hours',
+        'user', json_build_object(
+            'id', v_habilitada.id,
+            'email', v_habilitada.email,
+            'name', v_habilitada.name,
+            'role', 'habilitada',
+            'whatsapp', v_habilitada.whatsapp,
+            'estado', v_habilitada.estado,
+            'is_active', v_habilitada.is_active,
+            'enrollment_status', v_habilitada.enrollment_status
+        )
     );
 END;
 $$;
