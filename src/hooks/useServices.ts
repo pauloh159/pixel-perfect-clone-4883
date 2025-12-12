@@ -21,7 +21,7 @@ export const useServices = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch('https://cms.nazaresantosestetica.com.br/wp-json/wp/v2/servicos?_embed');
+        const response = await fetch('https://cms.nazaresantosestetica.com.br/wp-json/wp/v2/servicos?_embed&per_page=100');
         if (!response.ok) {
           throw new Error(`Erro ${response.status}: ${response.statusText}`);
         }

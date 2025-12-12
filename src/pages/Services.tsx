@@ -28,7 +28,7 @@ const Services: React.FC = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos timeout
       
-      const response = await fetch('https://cms.nazaresantosestetica.com.br/wp-json/wp/v2/servicos?_embed', {
+      const response = await fetch('https://cms.nazaresantosestetica.com.br/wp-json/wp/v2/servicos?_embed&per_page=100', {
         signal: controller.signal,
         headers: {
           'Accept': 'application/json',
