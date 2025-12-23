@@ -62,8 +62,13 @@ export const Header: React.FC = () => {
               </div>
             ) : (
               <div className="flex items-center gap-4">
-                <Link to="/login" className="cursor-pointer transition-all duration-300 font-judson text-base font-bold text-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))]">Login</Link>
-                <Link to="/cadastro" className="px-4 py-2 bg-[hsl(var(--foreground))] rounded-[3px] hover:bg-[hsl(var(--secondary))] transition-colors duration-300">
+                <button onClick={() => setIsLoginModalOpen(true)} className="cursor-pointer transition-all duration-300 font-judson text-base font-bold text-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))]">
+                  Login
+                </button>
+                <Link 
+                  to="/cadastro"
+                  className="px-4 py-2 bg-[hsl(var(--foreground))] rounded-[3px] hover:bg-[hsl(var(--secondary))] transition-colors duration-300"
+                >
                   <span className="text-white text-center text-sm xl:text-base font-bold">
                     Cadastro
                   </span>

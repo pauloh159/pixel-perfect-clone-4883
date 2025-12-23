@@ -50,6 +50,11 @@ export function Register() {
       }
 
       setSuccess(true);
+      
+      // Redirecionar para o WhatsApp após salvar no banco
+      const whatsappLink = "https://wa.me/558585009515?text=Ol%C3%A1!%20Gostaria%20de%20fazer%20meu%20pr%C3%A9-cadastro%20como%20habilitada.";
+      window.open(whatsappLink, '_blank');
+
       setTimeout(() => {
         navigate('/');
       }, 5000);

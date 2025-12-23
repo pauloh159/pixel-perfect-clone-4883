@@ -52,9 +52,14 @@ export const Treatments: React.FC = () => {
           <p className="font-jomolhari text-base md:text-lg text-[hsl(var(--primary))]/80 mb-6">
             Nosso espaço exclusivo une conforto e tecnologia avançada para sua transformação completa.
           </p>
-          <button className="px-6 py-3 bg-[#a66642] text-white font-jomolhari rounded-md hover:bg-opacity-90 transition-colors self-center lg:self-start">
+          <a 
+            href="https://wa.me/558598260078?text=Ol%C3%A1!%20Gostaria%20de%20agendar%20um%20hor%C3%A1rio."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-6 py-3 bg-[#a66642] text-white font-jomolhari rounded-md hover:bg-opacity-90 transition-colors self-center lg:self-start inline-block text-center"
+          >
             Marque sua Consulta
-          </button>
+          </a>
         </div>
 
         {/* Carousel */}

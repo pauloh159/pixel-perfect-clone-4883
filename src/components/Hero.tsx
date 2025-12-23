@@ -27,7 +27,10 @@ export const Hero: React.FC = () => {
               <p className="text-lg text-[#402510] leading-relaxed">
                 {subtitle}
               </p>
-              <Button className="bg-[#A67B5B] hover:bg-[#8C6A4E] text-white font-bold py-3 px-6 rounded-md">
+              <Button 
+                className="bg-[#A67B5B] hover:bg-[#8C6A4E] text-white font-bold py-3 px-6 rounded-md"
+                onClick={() => window.open('https://wa.me/558598260078?text=Ol%C3%A1!%20Gostaria%20de%20agendar%20um%20hor%C3%A1rio.', '_blank')}
+              >
                 {buttonText}
               </Button>
             </div>

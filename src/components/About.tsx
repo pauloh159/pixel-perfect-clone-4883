@@ -28,11 +28,16 @@ export const About: React.FC = () => {
         transformação completa.
       </div>
       
-      <button className="flex w-[271px] h-[50px] justify-center items-center gap-2.5 absolute bg-[#A66642] px-[21px] py-1.5 rounded-[5px] left-[155px] top-[2097px] hover:bg-[#402510] transition-colors duration-300">
+      <a 
+        href="https://wa.me/558598260078?text=Ol%C3%A1!%20Gostaria%20de%20agendar%20um%20hor%C3%A1rio."
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex w-[271px] h-[50px] justify-center items-center gap-2.5 absolute bg-[#A66642] px-[21px] py-1.5 rounded-[5px] left-[155px] top-[2097px] hover:bg-[#402510] transition-colors duration-300"
+      >
         <span className="text-[#EFCFA6] text-center text-2xl font-normal relative">
           Marque sua Consulta
         </span>
-      </button>
+      </a>
     </section>
   );
 };

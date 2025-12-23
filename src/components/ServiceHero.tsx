@@ -25,7 +25,9 @@ export const ServiceHero: React.FC<ServiceHeroProps> = ({ onSearch }) => {
                 Transformamos milhares de vidas proporcionando beleza, saúde e bem-estar que acreditamos em ser a nossa tríade só sucesso.
               </p>
               <a 
-                href="#"
+                href="https://wa.me/558598260078?text=Ol%C3%A1!%20Gostaria%20de%20agendar%20um%20hor%C3%A1rio."
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-[#BF7E46] text-white font-semibold py-3 px-8 rounded-lg hover:bg-opacity-90 transition-colors"
               >
                 Realize o seu agendamento

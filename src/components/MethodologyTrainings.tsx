@@ -13,10 +13,17 @@ interface Event {
   acf?: {
     nome_evento?: string;
     descricao_evento?: string;
+    descricao_do_evento?: string; // Adicionado para compatibilidade
     data_evento?: string;
     local_evento?: string;
+    localizacao_evento?: string;
     max_participantes?: number;
     url_imagem_evento?: string;
+  };
+  _embedded?: {
+    'wp:featuredmedia'?: Array<{
+      source_url: string;
+    }>;
   };
   date: string;
   status: string;
@@ -33,6 +40,12 @@ export const MethodologyTrainings = () => {
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  const decodeHtml = (html: string) => {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
+  };
+
   const fetchEvents = async (attempt = 0) => {
     try {
       setLoading(true);
@@ -41,7 +54,8 @@ export const MethodologyTrainings = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-      const response = await fetch('https://cms.nazaresantosestetica.com.br/wp-json/wp/v2/eventos?status=publish&per_page=100', {
+      // Adicionado _embed para trazer imagens destacadas
+      const response = await fetch('https://cms.nazaresantosestetica.com.br/wp-json/wp/v2/eventos?status=publish&per_page=100&_embed', {
         signal: controller.signal,
       });
 
@@ -52,6 +66,7 @@ export const MethodologyTrainings = () => {
       }
 
       const data: Event[] = await response.json();
+      console.log('Eventos carregados da API:', data); // Log para debug dos campos ACF
       const activeEvents = data.filter(event => event.status === 'publish');
       setEvents(activeEvents);
       setRetryCount(0);
@@ -115,36 +130,58 @@ export const MethodologyTrainings = () => {
   }, [api, events]);
 
   const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+    
+    // Tratamento para formato ACF (YYYYMMDD)
+    if (dateString.length === 8 && /^\d{8}$/.test(dateString)) {
+      const year = dateString.substring(0, 4);
+      const month = dateString.substring(4, 6);
+      const day = dateString.substring(6, 8);
+      return `${day}/${month}/${year}`;
+    }
+
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString;
+
     return date.toLocaleDateString('pt-BR', {
       day: '2-digit',
       month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+      year: 'numeric'
     });
   };
 
   const getEventName = (event: Event) => {
-    return event.acf?.nome_evento || event.title?.rendered || 'Evento sem título';
+    const title = event.acf?.nome_evento || event.title?.rendered || 'Evento sem título';
+    return decodeHtml(title);
   };
 
   const getEventDescription = (event: Event) => {
-    const description = event.acf?.descricao_evento || event.content?.rendered || 'Descrição não disponível';
-    // Remove HTML tags se houver
-    return description.replace(/<[^>]*>/g, '');
+    // Tenta descricao_do_evento (API) ou descricao_evento (Interface antiga)
+    const description = event.acf?.descricao_do_evento || event.acf?.descricao_evento || event.content?.rendered || 'Descrição não disponível';
+    // Remove HTML tags se houver e decodifica entidades
+    return decodeHtml(description.replace(/<[^>]*>/g, ''));
   };
 
   const getEventImage = (event: Event) => {
-    return event.acf?.url_imagem_evento || '/placeholder-event.svg';
+    // Tenta pegar do ACF primeiro, depois da imagem destacada do WordPress
+    if (event.acf?.url_imagem_evento) return event.acf.url_imagem_evento;
+    
+    if (event._embedded && event._embedded['wp:featuredmedia'] && event._embedded['wp:featuredmedia'][0]) {
+      return event._embedded['wp:featuredmedia'][0].source_url;
+    }
+    
+    return '/placeholder-event.svg';
   };
 
   const getEventDate = (event: Event) => {
+    // Prioriza data do ACF, se não existir, usa a data de publicação
+    // Mas a data do ACF é a correta para "quando o evento acontece"
     return event.acf?.data_evento || event.date;
   };
 
   const getEventLocation = (event: Event) => {
-    return event.acf?.local_evento || '';
+    // Tenta variações comuns de nome de campo
+    return event.acf?.local_evento || event.acf?.localizacao_evento || '';
   };
 
   const getEventMaxParticipants = (event: Event) => {
@@ -246,8 +283,8 @@ export const MethodologyTrainings = () => {
                         )}
                       </div>
                       <button 
-                        className="w-full mt-4 bg-accent text-white py-2 px-4 rounded-lg hover:bg-accent/90 transition-colors duration-300 font-semibold"
                         onClick={() => setIsRegistrationModalOpen(true)}
+                        className="w-full mt-4 bg-accent text-white py-2 px-4 rounded-lg hover:bg-accent/90 transition-colors duration-300 font-semibold block text-center"
                       >
                         Inscrever-se
                       </button>
