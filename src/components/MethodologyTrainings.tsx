@@ -132,16 +132,27 @@ export const MethodologyTrainings = () => {
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
     
-    // Tratamento para formato ACF (YYYYMMDD)
-    if (dateString.length === 8 && /^\d{8}$/.test(dateString)) {
+    // Debug
+    // console.log('Formatando data:', dateString);
+
+    // Tratamento para formato ACF (YYYYMMDD) - Ex: 20260815
+    if (typeof dateString === 'string' && dateString.length === 8 && /^\d{8}$/.test(dateString)) {
       const year = dateString.substring(0, 4);
       const month = dateString.substring(4, 6);
       const day = dateString.substring(6, 8);
       return `${day}/${month}/${year}`;
     }
 
+    // Tratamento para formato DD/MM/YYYY (caso o ACF retorne formatado)
+    if (typeof dateString === 'string' && /^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
+      return dateString;
+    }
+
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return dateString;
+    if (isNaN(date.getTime())) {
+      console.warn('Data inválida recebida:', dateString);
+      return 'Data a definir';
+    }
 
     return date.toLocaleDateString('pt-BR', {
       day: '2-digit',
@@ -156,10 +167,27 @@ export const MethodologyTrainings = () => {
   };
 
   const getEventDescription = (event: Event) => {
-    // Tenta descricao_do_evento (API) ou descricao_evento (Interface antiga)
-    const description = event.acf?.descricao_do_evento || event.acf?.descricao_evento || event.content?.rendered || 'Descrição não disponível';
-    // Remove HTML tags se houver e decodifica entidades
-    return decodeHtml(description.replace(/<[^>]*>/g, ''));
+    // Logs detalhados para debug em produção
+    if (!event.acf) {
+      console.warn(`Evento ${event.id} sem campos ACF`, event);
+    } else {
+      // console.log(`Evento ${event.id} ACF:`, event.acf);
+    }
+
+    // Tenta campos do ACF primeiro
+    if (event.acf?.descricao_do_evento) {
+        return decodeHtml(event.acf.descricao_do_evento.replace(/<[^>]*>/g, ''));
+    }
+    if (event.acf?.descricao_evento) {
+        return decodeHtml(event.acf.descricao_evento.replace(/<[^>]*>/g, ''));
+    }
+
+    // Fallback para content
+    if (event.content?.rendered) {
+        return decodeHtml(event.content.rendered.replace(/<[^>]*>/g, ''));
+    }
+
+    return 'Descrição não disponível';
   };
 
   const getEventImage = (event: Event) => {
