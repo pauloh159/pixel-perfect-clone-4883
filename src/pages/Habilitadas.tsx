@@ -37,6 +37,14 @@ const hasPais = (obj: unknown): obj is { pais: string } => {
 const getStateValue = (h: any): string => h?.estado ?? h?.Estado ?? '';
 const getWhatsappValue = (h: any): string => h?.whatsapp ?? h?.WhatsApp ?? '';
 
+const formatInstagramUrl = (instagram: string): string => {
+  if (!instagram) return '';
+  const cleanInsta = instagram.trim();
+  if (cleanInsta.startsWith('http')) return cleanInsta;
+  if (cleanInsta.startsWith('@')) return `https://instagram.com/${cleanInsta.substring(1)}`;
+  return `https://instagram.com/${cleanInsta}`;
+};
+
 export function Habilitadas() {
   const [habilitadas, setHabilitadas] = useState<Habilitada[]>([]);
   const [loading, setLoading] = useState(true);
@@ -236,8 +244,22 @@ export function Habilitadas() {
                 >
                   <h3 className="text-xl font-bold mb-2">{habilitada.name}</h3>
                   <p className="text-gray-700">Estado: {getStateValue(habilitada)}</p>
+                  {habilitada.cidade && <p className="text-gray-700">Cidade: {habilitada.cidade}</p>}
                   <p className="text-gray-700">E-mail: {habilitada.email}</p>
                   <p className="text-gray-700">WhatsApp: {getWhatsappValue(habilitada)}</p>
+                  {habilitada.instagram && (
+                    <p className="text-gray-700">
+                      Instagram:{' '}
+                      <a
+                        href={formatInstagramUrl(habilitada.instagram)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 hover:underline break-all"
+                      >
+                        {habilitada.instagram}
+                      </a>
+                    </p>
+                  )}
                 </div>
               ))}
             </div>

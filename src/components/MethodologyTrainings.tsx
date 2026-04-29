@@ -150,8 +150,9 @@ export const MethodologyTrainings = () => {
 
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
-      console.warn('Data inválida recebida:', dateString);
-      return 'Data a definir';
+      // Como a data agora é um texto livre digitado no WordPress, 
+      // retornamos o próprio texto se não for uma data válida tradicional.
+      return dateString;
     }
 
     return date.toLocaleDateString('pt-BR', {
@@ -226,7 +227,7 @@ export const MethodologyTrainings = () => {
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary mb-6">
-              Fique Por Dentro da <span className="text-accent">Agenda de Treinamentos</span>
+              Fique Por Dentro da <span className="text-[#A67B5B]">Agenda de Treinamentos</span>
             </h2>
           </div>
           <div className="flex justify-center items-center py-20">
@@ -245,7 +246,7 @@ export const MethodologyTrainings = () => {
       <div className="container mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary mb-6">
-            Fique Por Dentro da <span className="text-accent">Agenda de Treinamentos</span>
+            Fique Por Dentro da <span className="text-[#A67B5B]">Agenda de Treinamentos</span>
           </h2>
           <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
             Participe dos nossos treinamentos exclusivos e aprenda as técnicas mais avançadas em estética.
@@ -274,9 +275,6 @@ export const MethodologyTrainings = () => {
                         className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                         loading={index === 0 ? "eager" : "lazy"}
                       />
-                      <div className="absolute top-4 right-4 bg-accent text-white px-3 py-1 rounded-full text-sm font-semibold">
-                        Gratuito
-                      </div>
                     </div>
                     <div className="p-6">
                       <h3 className="text-xl font-bold text-primary mb-2 line-clamp-2">
@@ -312,7 +310,7 @@ export const MethodologyTrainings = () => {
                       </div>
                       <button 
                         onClick={() => setIsRegistrationModalOpen(true)}
-                        className="w-full mt-4 bg-accent text-white py-2 px-4 rounded-lg hover:bg-accent/90 transition-colors duration-300 font-semibold block text-center"
+                        className="w-full mt-4 bg-[#A67B5B] text-white py-2 px-4 rounded-lg hover:bg-[#8C6A4E] transition-colors duration-300 font-semibold block text-center"
                       >
                         Inscrever-se
                       </button>
@@ -336,7 +334,7 @@ export const MethodologyTrainings = () => {
                 <button
                   key={index}
                   className={`h-2 rounded-full transition-all duration-300 ${
-                    index === (current % events.length) ? 'bg-accent' : 'bg-gray-300'
+                    index === (current % events.length) ? 'bg-[#A67B5B]' : 'bg-gray-300'
                   }`}
                   style={{ width: `${pos.width}px` }}
                   onClick={() => api?.scrollTo(index)}

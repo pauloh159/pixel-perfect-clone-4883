@@ -10,6 +10,8 @@ export function Register() {
     email: '',
     whatsapp: '',
     estado: '',
+    cidade: '',
+    instagram: '',
     password: ''
   });
   const [loading, setLoading] = useState(false);
@@ -30,23 +32,21 @@ export function Register() {
     setSuccess(false);
 
     try {
-      const { error: insertError } = await supabase
-        .from('habilitadas')
-        .insert([
-          {
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-            whatsapp: formData.whatsapp,
-            estado: formData.estado,
-            is_active: false,
-            enrollment_status: 'inactive',
-            enrollment_date: new Date().toISOString().split('T')[0],
-          },
-        ]);
+      // Criar pré-cadastro chamando a function RPC
+      const { data, error } = await supabase.rpc('create_habilitada', {
+        p_email: formData.email,
+        p_password: formData.password,
+        p_name: formData.name,
+        p_whatsapp: formData.whatsapp,
+        p_estado: formData.estado,
+        p_cidade: formData.cidade,
+        p_instagram: formData.instagram
+      });
 
-      if (insertError) {
-        throw insertError;
+      if (error) throw error;
+      
+      if (data && !data.success) {
+        throw new Error(data.message || 'Erro ao realizar pré-cadastro');
       }
 
       setSuccess(true);
@@ -157,6 +157,33 @@ export function Register() {
                       <option key={estado} value={estado}>{estado}</option>
                     ))}
                   </select>
+                </div>
+
+                <div>
+                  <label htmlFor="cidade" className="block text-sm font-medium text-gray-700 mb-1">Cidade *</label>
+                  <input
+                    type="text"
+                    id="cidade"
+                    name="cidade"
+                    value={formData.cidade}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="Digite sua cidade"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="instagram" className="block text-sm font-medium text-gray-700 mb-1">Instagram</label>
+                  <input
+                    type="text"
+                    id="instagram"
+                    name="instagram"
+                    value={formData.instagram}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="@seuinstagram (Opcional)"
+                  />
                 </div>
 
                 <div>

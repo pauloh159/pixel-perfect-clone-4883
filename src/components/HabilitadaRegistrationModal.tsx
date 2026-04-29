@@ -17,6 +17,8 @@ export const HabilitadaRegistrationModal: React.FC<HabilitadaRegistrationModalPr
     email: '',
     whatsapp: '',
     estado: '',
+    cidade: '',
+    instagram: '',
     password: ''
   });
   const [loading, setLoading] = useState(false);
@@ -34,21 +36,23 @@ export const HabilitadaRegistrationModal: React.FC<HabilitadaRegistrationModalPr
     setError(null);
 
     try {
-      // Criar pré-cadastro com status inativo
-      const { error } = await supabase
-        .from('habilitadas')
-        .insert([{
-          name: formData.name,
-          email: formData.email,
-          whatsapp: formData.whatsapp,
-          estado: formData.estado,
-          password: formData.password,
-          is_active: false,
-          enrollment_status: 'inactive',
-          enrollment_date: new Date().toISOString().split('T')[0]
-        }]);
+      // Criar pré-cadastro chamando a function RPC
+      const { data, error } = await supabase.rpc('create_habilitada', {
+        p_email: formData.email,
+        p_password: formData.password,
+        p_name: formData.name,
+        p_whatsapp: formData.whatsapp,
+        p_estado: formData.estado,
+        p_cidade: formData.cidade,
+        p_instagram: formData.instagram
+      });
 
       if (error) throw error;
+      
+      // A function retorna sucesso ou falha
+      if (data && !data.success) {
+        throw new Error(data.message || 'Erro ao realizar pré-cadastro');
+      }
 
       // Redirecionar para o WhatsApp após salvar no banco
       const whatsappLink = "https://wa.me/558585009515?text=Ol%C3%A1!%20Gostaria%20de%20fazer%20meu%20pr%C3%A9-cadastro%20como%20habilitada.";
@@ -61,10 +65,18 @@ export const HabilitadaRegistrationModal: React.FC<HabilitadaRegistrationModalPr
         email: '',
         whatsapp: '',
         estado: '',
+        cidade: '',
+        instagram: '',
         password: ''
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao realizar pré-cadastro');
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao realizar pré-cadastro';
+      console.error('Registration Error:', err);
+      if (errorMessage.includes('unique constraint')) {
+        setError('Este e-mail já está cadastrado.');
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -165,6 +177,37 @@ export const HabilitadaRegistrationModal: React.FC<HabilitadaRegistrationModalPr
                   <option key={estado} value={estado}>{estado}</option>
                 ))}
               </select>
+            </div>
+
+            <div>
+              <label htmlFor="cidade" className="block text-sm font-medium text-gray-700 mb-1">
+                Cidade *
+              </label>
+              <input
+                type="text"
+                id="cidade"
+                name="cidade"
+                value={formData.cidade}
+                onChange={handleChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="Digite sua cidade"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="instagram" className="block text-sm font-medium text-gray-700 mb-1">
+                Instagram
+              </label>
+              <input
+                type="text"
+                id="instagram"
+                name="instagram"
+                value={formData.instagram}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="@seuinstagram (Opcional)"
+              />
             </div>
 
             <div>

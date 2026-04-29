@@ -12,6 +12,8 @@ interface LoginResponse {
     role: 'admin' | 'habilitada' | 'superadmin';
     whatsapp?: string;
     estado?: string;
+    cidade?: string;
+    instagram?: string;
     is_active?: boolean;
     enrollment_status?: string;
   };
@@ -24,6 +26,8 @@ interface LoginResponse {
   role?: 'admin' | 'habilitada' | 'superadmin';
   whatsapp?: string;
   estado?: string;
+  cidade?: string;
+  instagram?: string;
   is_active?: boolean;
   enrollment_status?: string;
 }
@@ -38,6 +42,8 @@ export interface SessionData {
     role: 'admin' | 'habilitada' | 'superadmin';
     whatsapp?: string;
     estado?: string;
+    cidade?: string;
+    instagram?: string;
     is_active?: boolean;
     enrollment_status?: string;
   };
@@ -72,6 +78,8 @@ export const login = async (email: string, password: string, userType: 'admin' |
           role: response.role as 'admin' | 'habilitada' | 'superadmin',
           whatsapp: response.whatsapp,
           estado: response.estado,
+          cidade: response.cidade,
+          instagram: response.instagram,
           is_active: response.is_active,
           enrollment_status: response.enrollment_status,
         };
@@ -96,6 +104,8 @@ export const login = async (email: string, password: string, userType: 'admin' |
           role: userPayload.role,
           whatsapp: userPayload.whatsapp,
           estado: userPayload.estado,
+          cidade: userPayload.cidade,
+          instagram: userPayload.instagram,
           is_active: userPayload.is_active,
           enrollment_status: userPayload.enrollment_status,
         },
@@ -155,7 +165,7 @@ export const validateSession = async () => {
   // Verificar se a sessão expirou localmente
   const expiresAt = new Date(session.expires_at);
   if (expiresAt <= new Date()) {
-    localStorage.removeItem('session');
+    localStorage.removeItem('authSession');
     return null;
   }
   
@@ -166,7 +176,7 @@ export const validateSession = async () => {
     });
     
     if (error || !data?.valid) {
-      localStorage.removeItem('session');
+      localStorage.removeItem('authSession');
       return null;
     }
     
@@ -179,14 +189,14 @@ export const validateSession = async () => {
           ...data.user
         }
       };
-      localStorage.setItem('session', JSON.stringify(updatedSession));
+      localStorage.setItem('authSession', JSON.stringify(updatedSession));
       return updatedSession;
     }
     
     return session;
   } catch (error) {
     console.error('Erro ao validar sessão:', error);
-    localStorage.removeItem('session');
+    localStorage.removeItem('authSession');
     return null;
   }
 };
@@ -220,41 +230,49 @@ export const updateProfile = async (profileData: {
   email?: string;
   whatsapp?: string;
   estado?: string;
+  cidade?: string;
+  instagram?: string;
 }) => {
   const user = getCurrentUser();
   if (!user) {
     throw new Error('Usuário não autenticado');
   }
 
-  const { data, error } = await supabase.rpc('update_habilitada_profile', {
-    p_user_id: user.id,
-    p_name: profileData.name,
-    p_email: profileData.email,
-    p_whatsapp: profileData.whatsapp,
-    p_estado: profileData.estado
-  });
+  const updatePayload = {
+    name: profileData.name,
+    email: profileData.email,
+    whatsapp: profileData.whatsapp,
+    estado: profileData.estado,
+    cidade: profileData.cidade,
+    instagram: profileData.instagram
+  };
+
+  const { data, error } = await supabase
+    .from('habilitadas')
+    .update(updatePayload)
+    .eq('id', user.id)
+    .select()
+    .single();
 
   if (error) {
     throw new Error(error.message);
   }
 
   // Atualizar os dados do usuário no localStorage se o update foi bem-sucedido
-  if (data.success && data.user) {
+  if (data) {
     const currentSession = getSession();
     if (currentSession) {
       const updatedSession = {
         ...currentSession,
         user: {
           ...currentSession.user,
-          name: data.user.name,
-          email: data.user.email,
-          whatsapp: data.user.whatsapp,
-          estado: data.user.estado
+          ...data
         }
       };
-      localStorage.setItem('session', JSON.stringify(updatedSession));
+      localStorage.setItem('authSession', JSON.stringify(updatedSession));
     }
+    return { success: true, user: data };
   }
 
-  return data;
+  return { success: false, message: 'Nenhum dado retornado' };
 };

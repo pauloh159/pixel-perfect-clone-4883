@@ -54,9 +54,22 @@ export const Footer: React.FC = () => {
           <div className="font-poppins text-sm sm:text-base text-primary">
             <p className="mb-4">
               {contactInfo.address.map((line, index) => (
-                <React.Fragment key={index}>{line}<br /></React.Fragment>
+                <React.Fragment key={index}>
+                  {index === 0 ? <strong>{line}</strong> : line}
+                  <br />
+                </React.Fragment>
               ))}
             </p>
+            {contactInfo.addressSP && (
+              <p className="mb-4">
+                {contactInfo.addressSP.map((line, index) => (
+                  <React.Fragment key={`sp-${index}`}>
+                    {index === 0 ? <strong>{line}</strong> : line}
+                    <br />
+                  </React.Fragment>
+                ))}
+              </p>
+            )}
             <p className="relative pl-6 sm:pl-8">
               <span className="absolute left-0 top-0">
                 <TelephoneIcon />

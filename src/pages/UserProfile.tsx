@@ -13,6 +13,8 @@ const UserProfile: React.FC = () => {
     email: '',
     whatsapp: '',
     state: '',
+    city: '',
+    instagram: '',
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -25,6 +27,8 @@ const UserProfile: React.FC = () => {
         email: user.email || '',
         whatsapp: user.whatsapp || '',
         state: user.estado || '',
+        city: user.cidade || '',
+        instagram: user.instagram || '',
       });
     }
   }, [user]);
@@ -79,7 +83,9 @@ const UserProfile: React.FC = () => {
         name: formData.name,
         email: formData.email,
         whatsapp: formData.whatsapp,
-        estado: formData.state
+        estado: formData.state,
+        cidade: formData.city,
+        instagram: formData.instagram
       });
 
       if (result.success) {
@@ -89,7 +95,9 @@ const UserProfile: React.FC = () => {
           name: result.user.name,
           email: result.user.email,
           whatsapp: result.user.whatsapp,
-          estado: result.user.estado
+          estado: result.user.estado,
+          cidade: result.user.cidade,
+          instagram: result.user.instagram
         });
 
         alert('Dados atualizados com sucesso!');
@@ -185,6 +193,14 @@ const UserProfile: React.FC = () => {
                   <div>
                     <label htmlFor="state" className="text-sm font-bold text-gray-700">Estado</label>
                     <Input id="state" type="text" value={formData.state} onChange={handleChange} className="mt-1" />
+                  </div>
+                  <div>
+                    <label htmlFor="city" className="text-sm font-bold text-gray-700">Cidade</label>
+                    <Input id="city" type="text" value={formData.city} onChange={handleChange} className="mt-1" />
+                  </div>
+                  <div>
+                    <label htmlFor="instagram" className="text-sm font-bold text-gray-700">Instagram</label>
+                    <Input id="instagram" type="text" value={formData.instagram} onChange={handleChange} className="mt-1" />
                   </div>
                 </div>
               </div>

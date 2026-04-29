@@ -11,6 +11,7 @@ interface Habilitada {
   whatsapp: string;
   cpf: string;
   estado: string;
+  cidade?: string;
   bio: string;
   profile_image_url?: string;
   enrollment_date: string;
@@ -58,6 +59,7 @@ const Habilitadas: React.FC = () => {
     password: string;
     whatsapp: string;
     estado: string;
+    cidade: string;
   }) => {
     try {
       const { data, error } = await supabase
@@ -68,6 +70,7 @@ const Habilitadas: React.FC = () => {
           password: newHabilitada.password,
           whatsapp: newHabilitada.whatsapp,
           estado: newHabilitada.estado,
+          cidade: newHabilitada.cidade,
           is_active: false,
           enrollment_status: 'inactive',
           enrollment_date: new Date().toISOString().split('T')[0],
@@ -95,15 +98,24 @@ const Habilitadas: React.FC = () => {
     email: string;
     whatsapp: string;
     estado: string;
+    cidade?: string;
+    cpf: string;
+    bio?: string;
   }) => {
     try {
-      const { data, error } = await supabase.rpc('update_habilitada_profile', {
-        habilitada_id: updatedHabilitada.id,
-        new_name: updatedHabilitada.name,
-        new_email: updatedHabilitada.email,
-        new_whatsapp: updatedHabilitada.whatsapp,
-        new_estado: updatedHabilitada.estado,
-      });
+      const { data, error } = await supabase
+        .from('habilitadas')
+        .update({
+          name: updatedHabilitada.name,
+          email: updatedHabilitada.email,
+          whatsapp: updatedHabilitada.whatsapp,
+          estado: updatedHabilitada.estado,
+          cidade: updatedHabilitada.cidade,
+          cpf: updatedHabilitada.cpf,
+          bio: updatedHabilitada.bio,
+        })
+        .eq('id', updatedHabilitada.id)
+        .select();
 
       if (error) throw error;
 
@@ -193,6 +205,7 @@ const Habilitadas: React.FC = () => {
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">WhatsApp</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cidade</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                 <th scope="col" className="relative px-6 py-3">
                   <span className="sr-only">Ações</span>
@@ -213,6 +226,7 @@ const Habilitadas: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{habilitada.email}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{habilitada.whatsapp}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{habilitada.estado}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{habilitada.cidade || '-'}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         habilitada.is_active 

@@ -9,6 +9,7 @@ interface AddHabilitadaModalProps {
     password: string;
     whatsapp: string; 
     estado: string;
+    cidade: string;
   }) => void;
 }
 
@@ -18,17 +19,19 @@ const AddHabilitadaModal: React.FC<AddHabilitadaModalProps> = ({ isOpen, onClose
   const [password, setPassword] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [estado, setEstado] = useState('');
+  const [cidade, setCidade] = useState('');
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onAdd({ name, email, password, whatsapp, estado });
+    onAdd({ name, email, password, whatsapp, estado, cidade });
     setName('');
     setEmail('');
     setPassword('');
     setWhatsapp('');
     setEstado('');
+    setCidade('');
   };
 
   return (
@@ -88,6 +91,17 @@ const AddHabilitadaModal: React.FC<AddHabilitadaModalProps> = ({ isOpen, onClose
               id="estado" 
               value={estado} 
               onChange={(e) => setEstado(e.target.value)} 
+              required
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="cidade" className="block text-sm font-medium text-gray-700">Cidade</label>
+            <input 
+              type="text" 
+              id="cidade" 
+              value={cidade} 
+              onChange={(e) => setCidade(e.target.value)} 
               required
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" 
             />

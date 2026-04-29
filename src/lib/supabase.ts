@@ -79,6 +79,8 @@ export interface Database {
           whatsapp: string
           cpf: string
           estado: string
+          cidade: string | null
+          instagram: string | null
           bio: string
           profile_image_url: string | null
           enrollment_date: string
@@ -97,6 +99,8 @@ export interface Database {
           whatsapp: string
           cpf?: string
           estado?: string
+          cidade?: string
+          instagram?: string | null
           bio?: string
           profile_image_url?: string | null
           enrollment_date?: string
@@ -115,6 +119,8 @@ export interface Database {
           whatsapp?: string
           cpf?: string
           estado?: string
+          cidade?: string
+          instagram?: string | null
           bio?: string
           profile_image_url?: string | null
           enrollment_date?: string
@@ -250,3 +256,5 @@ export interface Database {
     }
   }
 }
+
+export type Habilitada = Database['public']['Tables']['habilitadas']['Row'];

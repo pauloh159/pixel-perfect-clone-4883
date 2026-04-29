@@ -6,6 +6,7 @@ interface Habilitada {
   email: string;
   whatsapp: string;
   estado: string;
+  cidade?: string;
   cpf: string;
   bio?: string;
   profile_image_url?: string;
@@ -25,6 +26,7 @@ const EditHabilitadaModal: React.FC<EditHabilitadaModalProps> = ({ isOpen, onClo
   const [email, setEmail] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [estado, setEstado] = useState('');
+  const [cidade, setCidade] = useState('');
   const [cpf, setCpf] = useState('');
   const [bio, setBio] = useState('');
 
@@ -34,6 +36,7 @@ const EditHabilitadaModal: React.FC<EditHabilitadaModalProps> = ({ isOpen, onClo
       setEmail(habilitada.email);
       setWhatsapp(habilitada.whatsapp);
       setEstado(habilitada.estado);
+      setCidade(habilitada.cidade || '');
       setCpf(habilitada.cpf);
       setBio(habilitada.bio || '');
     }
@@ -47,7 +50,8 @@ const EditHabilitadaModal: React.FC<EditHabilitadaModalProps> = ({ isOpen, onClo
         name, 
         email, 
         whatsapp, 
-        estado, 
+        estado,
+        cidade, 
         cpf,
         bio
       });
@@ -107,6 +111,16 @@ const EditHabilitadaModal: React.FC<EditHabilitadaModalProps> = ({ isOpen, onClo
               type="text"
               value={estado}
               onChange={(e) => setEstado(e.target.value)}
+              required
+              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Cidade</label>
+            <input
+              type="text"
+              value={cidade}
+              onChange={(e) => setCidade(e.target.value)}
               required
               className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             />

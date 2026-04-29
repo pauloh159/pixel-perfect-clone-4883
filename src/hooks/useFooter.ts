@@ -10,6 +10,7 @@ interface ContactInfo {
   title: string;
   address: string[];
   phone: string;
+  addressSP?: string[];
 }
 
 interface NavigationLink {
@@ -54,7 +55,8 @@ const useFooter = () => {
           ],
           contactInfo: {
             title: 'Entre em contato',
-            address: ['R. Barbosa de Freitas, 1415', 'loja C - Aldeota'],
+            address: ['Fortaleza:', 'R. Barbosa de Freitas, 1415', 'loja C - Aldeota'],
+            addressSP: ['São Paulo:', 'Shopping Flamingo', 'Alameda Araguaia, 762 – Sala 15S'],
             phone: 'Telefone: (85) 99620-9515',
           },
           navigationLinks: [
